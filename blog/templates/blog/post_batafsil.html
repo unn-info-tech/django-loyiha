@@ -1,0 +1,88 @@
+{% extends 'blog/asosiy.html' %}
+
+{% block sarlavha %}{{ post.sarlavha }}{% endblock %}
+
+{% block kontent %}
+<article class="post-detail">
+    <h1>{{ post.sarlavha }}</h1>
+
+    <div class="post-meta">
+        <p>👤 <strong>Muallif:</strong> <a href="{% url 'profil' post.muallif.username %}">{{ post.muallif.username }}</a></p>
+        <p>📅 <strong>Sana:</strong> {{ post.yaratilgan_sana|date:"d F Y, H:i" }}</p>
+        <p>📂 <strong>Kategoriya:</strong> {{ post.kategoriya }}</p>
+        <p>👁 <strong>Ko'rildi:</strong> {{ post.korildi }} marta</p>
+        
+        <!-- LIKE TUGMASI -->
+        <div class="like-section" style="margin-top: 10px;">
+            {% if user.is_authenticated %}
+                <a href="{% url 'like_post' post.id %}" class="btn {% if user_liked %}btn-liked{% else %}btn-like{% endif %}">
+                    {% if user_liked %} ❤️ Yoqdi {% else %} 🤍 Yoqtirish {% endif %}
+                </a>
+            {% else %}
+                <span class="text-muted">Like bosish uchun <a href="{% url 'kirish' %}">kiring</a></span>
+            {% endif %}
+            <strong style="margin-left: 10px;">{{ post.layklar.count }} likes</strong>
+        </div>
+    </div>
+
+    {% if post.rasm %}
+        <div style="margin:20px 0;">
+            <img src="{{ post.rasm.url }}" alt="post rasm" style="max-width:100%; border-radius:10px;">
+        </div>
+    {% endif %}
+
+    <div class="post-content">
+        {{ post.matn|linebreaks }}
+    </div>
+
+    <div class="post-actions" style="margin-top: 20px; margin-bottom: 20px;">
+        {% if user == post.muallif %}
+            <a href="{% url 'post_tahrirlash' post.id %}" class="btn">✏️ Tahrirlash</a>
+            <a href="{% url 'post_ochirish' post.id %}" class="btn btn-danger">🗑️ O'chirish</a>
+        {% endif %}
+        <a href="{% url 'bosh_sahifa' %}" class="btn btn-secondary">⬅ Orqaga</a>
+    </div>
+</article>
+
+<hr>
+
+<!-- IZOH BO'LIMI -->
+<section class="comments">
+    <h2>💬 Izohlar ({{ izohlar.count }})</h2>
+
+    {% for izoh in izohlar %}
+        <div class="comment-box" style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:8px;">
+            <div class="comment-header" style="display:flex; justify-content:space-between;">
+                <strong><a href="{% url 'profil' izoh.muallif.username %}">{{ izoh.muallif.username }}</a></strong>
+                <small>📅 {{ izoh.yaratilgan_sana|date:"d M Y H:i" }}</small>
+            </div>
+            <p>{{ izoh.matn }}</p>
+        </div>
+    {% empty %}
+        <p>Hozircha izoh yo‘q 😢</p>
+    {% endfor %}
+</section>
+
+<hr>
+
+<!-- IZOH QO'SHISH -->
+<section class="add-comment">
+    <h3>✍ Izoh qoldirish</h3>
+    
+    {% if user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+            <textarea 
+                name="matn" 
+                placeholder="Izohingizni shu yerga yozing..." 
+                required
+                style="width:100%; padding:10px; height:100px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;"
+            ></textarea>
+            <button type="submit" class="btn">🚀 Yuborish</button>
+        </form>
+    {% else %}
+        <p>Izoh qoldirish uchun iltimos <a href="{% url 'kirish' %}">tizimga kiring</a>.</p>
+    {% endif %}
+</section>
+
+{% endblock %}
