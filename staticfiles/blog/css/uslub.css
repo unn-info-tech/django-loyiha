@@ -522,19 +522,3 @@ legend {
     font-weight: bold;
     padding: 0 10px;
 }
-
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin: 40px 0;
-}
-
-.current-page {
-    padding: 10px 20px;
-    background-color: #667eea;
-    color: white;
-    border-radius: 5px;
-    font-weight: bold;
-}

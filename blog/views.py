@@ -7,10 +7,20 @@ from .models import Post, Izoh, Like, Profil
 from .forms import PostForma, RoyxatdanOtishForma, IzohForma, FoydalanuvchiYangilashForma, ProfilYangilashForma
 from django.contrib.auth import login, logout, authenticate
 
+from django.core.paginator import Paginator
+
 def bosh_sahifa(request):
-    postlar = Post.objects.filter(nashr_etilgan=True).order_by('-yaratilgan_sana')
-    context = {'postlar': postlar}
-    return render(request, 'blog/bosh.html', context)
+    postlar_list = Post.objects.select_related('muallif').filter(
+        nashr_etilgan=True
+    ).order_by('-yaratilgan_sana')
+
+    # Har sahifada 5 ta post
+    paginator = Paginator(postlar_list, 5)
+
+    sahifa_raqami = request.GET.get('sahifa')
+    postlar = paginator.get_page(sahifa_raqami)
+
+    return render(request, 'blog/bosh.html', {'postlar': postlar})
 
 def biz_haqimizda(request):
     return render(request, 'blog/biz_haqimizda.html')
