@@ -16,4 +16,4 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /var/www/django-loyiha
-          ./deploy.sh
+          ./deploy.sh 
